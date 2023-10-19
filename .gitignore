@@ -1,0 +1,4 @@
+bin/*
+!bin/.gitkeep
+
+internals/templates/*_templ.go
