@@ -2,3 +2,7 @@ bin/*
 !bin/.gitkeep
 
 internals/templates/*_templ.go
+
+tmp/
+node_modules/
+dist/

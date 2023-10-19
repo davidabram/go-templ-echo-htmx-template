@@ -8,9 +8,10 @@ import (
 
 func main() {
 	e := echo.New()
-  e.HideBanner = true
+
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.String(http.StatusOK, "Hello, 123 World!")
 	})
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
