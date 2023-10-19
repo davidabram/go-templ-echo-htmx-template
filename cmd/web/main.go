@@ -1,17 +1,14 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"davidabram/go-templ-echo-htmx-template/internals/handlers"
 )
 
 func main() {
 	e := echo.New()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, 123 World!")
-	})
+	e.GET("/", handlers.Index)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

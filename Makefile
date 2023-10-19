@@ -8,7 +8,7 @@ watch:
 	@./bin/air
 
 tailwind:
-	@./node_modules/.bin/tailwindcss -i ./style.css -o ./dist/style.css --watch
+	@./node_modules/.bin/tailwindcss -i ./style.css -o ./dist/style.css
 
 templ:
 	@./bin/templ generate ./internals/templates/*.templ
