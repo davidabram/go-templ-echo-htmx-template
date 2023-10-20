@@ -1,6 +1,8 @@
 package templates
 
 templ Hello(name string) {
-  <div class="bg-red-500">Hello, { name }</div>
+	@Layout(name) {
+		<div>Hello, { name }</div>
+	}
 }
 

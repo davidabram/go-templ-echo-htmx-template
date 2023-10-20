@@ -10,5 +10,7 @@ func main() {
 
 	e.GET("/", handlers.Hello)
 
+	e.Static("/", "dist")
+
 	e.Logger.Fatal(e.Start(":1323"))
 }

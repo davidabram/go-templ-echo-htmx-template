@@ -1,0 +1,26 @@
+package templates
+
+templ Layout(title string) {
+	<html>
+		@Head(title)
+		@Body() {
+			{ children... }
+		}
+	</html>
+}
+
+templ Head(title string) {
+	<head>
+		<title>{ title }</title>
+		<link href="/style.css" rel="stylesheet" />
+	</head>
+}
+
+templ Body() {
+	<body class="bg-red-500">
+		<main>
+			{ children... }
+		</main>
+	</body>
+}
+
