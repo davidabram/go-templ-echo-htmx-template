@@ -1,11 +1,13 @@
 package handlers
 
 import (
-  "github.com/labstack/echo/v4"
-  "github.com/a-h/templ"
+  "context"
 
+  "github.com/labstack/echo/v4"
   "davidabram/go-templ-echo-htmx-template/internals/templates"
 )
 
-func Index(c echo.Context) error {
+func Hello(c echo.Context) error {
+  components := templates.Hello("David!")
+  return components.Render(context.Background(), c.Response().Writer)
 }

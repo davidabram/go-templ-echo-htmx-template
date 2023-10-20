@@ -8,7 +8,7 @@ import (
 func main() {
 	e := echo.New()
 
-	e.GET("/", handlers.Index)
+	e.GET("/", handlers.Hello)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
