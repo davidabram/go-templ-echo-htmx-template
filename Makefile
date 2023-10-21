@@ -3,12 +3,11 @@
 run:
 	@go run cmd/web/main.go
 
-.ONESHELL:
 watch:
-	@./bin/air
+	@./bin/air & $(MAKE) tailwind
 
 tailwind:
-	@./node_modules/.bin/tailwindcss -i ./style.css -o ./dist/style.css
+	@./node_modules/.bin/tailwindcss -i ./style.css -o ./dist/style.css --watch
 
 templ:
 	@./bin/templ generate ./internals/templates/*.templ
