@@ -1,7 +1,7 @@
-package handlers;
+package handlers
 
 import (
-  "github.com/donseba/go-htmx"
+	"github.com/donseba/go-htmx"
 )
 
 type App struct {
