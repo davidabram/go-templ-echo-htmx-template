@@ -1,7 +1,8 @@
 package templates
 
-templ Hello(name string) {
+templ Hello(name string, htmxHeaders string) {
 	@Layout(name) {
 		<div>Hello, { name }</div>
+		<pre>{ htmxHeaders }</pre>
 	}
 }

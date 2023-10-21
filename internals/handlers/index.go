@@ -1,13 +1,21 @@
 package handlers
 
 import (
-  "context"
+	"context"
+	"encoding/json"
 
-  "github.com/labstack/echo/v4"
-  "davidabram/go-templ-echo-htmx-template/internals/templates"
+	"davidabram/go-templ-echo-htmx-template/internals/templates"
+
+	"github.com/donseba/go-htmx"
+	"github.com/labstack/echo/v4"
 )
 
-func Hello(c echo.Context) error {
-  components := templates.Hello("David!")
+  func (a *App) Hello(c echo.Context) error {
+  r := c.Request()
+	h := r.Context().Value(htmx.ContextRequestHeader).(htmx.HxRequestHeader)
+
+  b, _ := json.Marshal(h)
+
+  components := templates.Hello("David!", string(b))
   return components.Render(context.Background(), c.Response().Writer)
 }
