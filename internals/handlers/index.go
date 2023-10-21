@@ -14,7 +14,7 @@ import (
   r := c.Request()
 	h := r.Context().Value(htmx.ContextRequestHeader).(htmx.HxRequestHeader)
 
-  b, _ := json.Marshal(h)
+  b, _ := json.MarshalIndent(h, "", "\t")
 
   components := templates.Hello("David!", string(b))
   return components.Render(context.Background(), c.Response().Writer)

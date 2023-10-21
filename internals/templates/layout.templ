@@ -4,6 +4,7 @@ templ Layout(title string) {
 	<html>
 		@Head(title)
 		@Body() {
+			@Navigation()
 			{ children... }
 		}
 	</html>
@@ -11,8 +12,14 @@ templ Layout(title string) {
 
 templ Head(title string) {
 	<head>
+		<meta charset="UTF-8"/>
 		<title>{ title }</title>
-		<link href="/style.css" rel="stylesheet" />
+		<script src="https://unpkg.com/htmx.org@1.9.6/dist/htmx.min.js"></script>
+		<script src="https://unpkg.com/htmx.org@1.9.6/dist/ext/head-support.js"></script>
+		<link href="/style.css" rel="stylesheet"/>
+		<script>
+			htmx.logger = console.log
+		</script>
 	</head>
 }
 
@@ -24,3 +31,9 @@ templ Body() {
 	</body>
 }
 
+templ Navigation() {
+	<nav hx-boost="true" hx-target="main" hx-swap="innerHTML">
+		<a href="/">Home</a>
+	</nav>
+	<hr />
+}
