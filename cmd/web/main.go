@@ -19,6 +19,7 @@ func main() {
 	e.Use(HtmxMiddleware)
 
 	e.GET("/", app.Hello)
+	e.GET("/about", app.About)
 
 	e.Static("/", "dist")
 

@@ -1,10 +1,17 @@
 package templates
 
-templ Layout(title string) {
+type Page struct {
+	Title string
+	Boosted bool
+}
+
+templ Layout(page *Page) {
 	<html>
-		@Head(title)
-		@Body() {
+		@Head(page.Title)
+		if !page.Boosted {
 			@Navigation()
+		}
+		@Content() {
 			{ children... }
 		}
 	</html>
@@ -23,17 +30,17 @@ templ Head(title string) {
 	</head>
 }
 
-templ Body() {
-	<body class="bg-green-500">
-		<main>
-			{ children... }
-		</main>
-	</body>
+templ Content() {
+	<main class="bg-red-500">
+		{ children... }
+	</main>
 }
 
 templ Navigation() {
-	<nav hx-boost="true" hx-target="main" hx-swap="innerHTML">
+	<nav hx-boost="true" hx-target="main" hx-swap="outerHTML">
 		<a href="/">Home</a>
+		<a href="/about">About</a>
 	</nav>
-	<hr />
+	<hr/>
 }
+
