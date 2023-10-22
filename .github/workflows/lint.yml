@@ -1,4 +1,4 @@
-name: Lint Go Code
+name: Lint
 
 on:
   pull_request:
@@ -15,6 +15,8 @@ jobs:
         with:
           stable: false
           go-version: '1.21.1'
+      - name: Build templ
+          run: make templ
       - name: Lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.0
