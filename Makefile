@@ -1,4 +1,4 @@
-.PHONY: run template watch setup air
+.PHONY: run templ watch tailwind setup setup-templ
 
 watch:
 	@./bin/air & $(MAKE) tailwind
@@ -9,8 +9,11 @@ tailwind:
 templ:
 	@./bin/templ generate ./internals/templates/*.templ
 
+setup-templ:
+	@go install github.com/a-h/templ && cp $(shell go env GOPATH)/bin/templ ./bin
+
 .ONESHELL:
 setup:
 	@curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
-	@go install github.com/a-h/templ && cp $(shell go env GOPATH)/bin/templ ./bin
+	$(MAKE) setup-templ
 	@bun i
