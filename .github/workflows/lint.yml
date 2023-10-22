@@ -18,8 +18,8 @@ jobs:
       - name: Build templ
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
-          go install github.com/a-h/templ
-          $(go env GOPATH)/bin/templ generate ./internals/templates/*.templ
+          go get -u github.com/a-h/templ
+          templ generate ./internals/templates/*.templ
       - name: Lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.0
