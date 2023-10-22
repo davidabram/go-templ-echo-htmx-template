@@ -9,6 +9,13 @@ templ BooksTable(page *Page, books []db.FullBookInfo) {
 	@Layout(page) {
 		<div>Books Table</div>
 		<table>
+			<tr>
+				<th>Title</th>
+				<th>Publication Year</th>
+				<th>Price</th>
+				<th>Author</th>
+				<th>Category</th>
+			</tr>
 			for _, book := range books {
 				<tr>
 					<td>{ book.Title }</td>
