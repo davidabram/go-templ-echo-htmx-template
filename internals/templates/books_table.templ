@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"fmt"
     "davidabram/go-templ-echo-htmx-template/internals/db"
 )
 
@@ -11,6 +12,10 @@ templ BooksTable(page *Page, books []db.FullBookInfo) {
 			for _, book := range books {
 				<tr>
 					<td>{ book.Title }</td>
+					<td>{ fmt.Sprintf("%d", book.PublicationYear) }</td>
+					<td>{ fmt.Sprintf("$%.2f", book.Price) }</td>
+					<td>{ book.Author.Name }</td>
+					<td>{ book.Category.Name }</td>
 				</tr>
 			}
 		</table>
