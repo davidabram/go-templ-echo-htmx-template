@@ -1,0 +1,19 @@
+package templates
+
+import (
+    "davidabram/go-templ-echo-htmx-template/internals/db"
+)
+
+templ BooksTable(page *Page, books []db.FullBookInfo) {
+	@Layout(page) {
+		<div>Books Table</div>
+		<table>
+			for _, book := range books {
+				<tr>
+					<td>{ book.Title }</td>
+				</tr>
+			}
+		</table>
+	}
+}
+

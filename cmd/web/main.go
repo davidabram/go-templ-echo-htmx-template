@@ -1,14 +1,22 @@
 package main
 
 import (
+	"log"
 	"context"
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
 	"github.com/donseba/go-htmx"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	app := &handlers.App{
 		HTMX: htmx.New(),
 	}
@@ -20,6 +28,7 @@ func main() {
 
 	e.GET("/", app.Hello)
 	e.GET("/about", app.About)
+	e.GET("/books", app.BooksTable)
 
 	e.Static("/", "dist")
 
