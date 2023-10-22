@@ -1,8 +1,5 @@
 .PHONY: run template watch setup air
 
-run:
-	@go run cmd/web/main.go
-
 watch:
 	@./bin/air & $(MAKE) tailwind
 
