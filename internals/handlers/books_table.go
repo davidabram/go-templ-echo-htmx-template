@@ -20,12 +20,13 @@ func (a *App) BooksTable(c echo.Context) error {
 		Boosted: h.HxBoosted,
 	}
 
-	DB := &db.Database{}
-	if err := DB.New(); err != nil {
+	db := &db.Database{}
+	if err := db.New(); err != nil {
 		return err
 	}
+	defer db.Instance.Close()
 
-	books, err := DB.ListFullBookInfo()
+	books, err := db.ListFullBookInfo()
 
 	if err != nil {
 		return err

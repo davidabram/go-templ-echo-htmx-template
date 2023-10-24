@@ -9,7 +9,7 @@ import (
 )
 
 type Database struct {
-	db *sql.DB
+	Instance *sql.DB
 }
 
 func (d *Database) New() error {
@@ -23,12 +23,12 @@ func (d *Database) New() error {
 		return fmt.Errorf("Error pinging database: %v", err)
 	}
 
-	d.db = db
+	d.Instance = db
 	return nil
 }
 
 func (d *Database) ListFullBookInfo() ([]FullBookInfo, error) {
-	rows, err := d.db.Query(`
+	rows, err := d.Instance.Query(`
 		SELECT b.*, a.author_id, a.name, a.bio, c.category_id, c.name
 		FROM books b
 		JOIN authors a ON b.author_id = a.author_id
