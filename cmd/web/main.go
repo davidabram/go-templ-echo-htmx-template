@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"context"
+	"os"
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
 	"github.com/donseba/go-htmx"
 	"github.com/joho/godotenv"
@@ -32,7 +33,8 @@ func main() {
 
 	e.Static("/", "dist")
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+
 }
 
 func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {

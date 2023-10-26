@@ -6,6 +6,7 @@ import (
 	"os"
 
 	_ "github.com/libsql/libsql-client-go/libsql"
+	_ "modernc.org/sqlite"
 )
 
 type Database struct {
