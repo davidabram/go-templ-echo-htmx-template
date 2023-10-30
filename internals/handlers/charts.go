@@ -31,7 +31,7 @@ func (a *App) Charts(c echo.Context) error {
 	chartData = append(chartData, templates.TimeSeries{
 		Title: "Random Series 2",
 		XValues: chart.Seq{Sequence: chart.NewLinearSequence().WithStart(50).WithEnd(55)}.Values(),
-		YValues: chart.Seq{Sequence: chart.NewRandomSequence().WithLen(5).WithMin(0).WithMax(10)}.Values(),
+		YValues: chart.Seq{Sequence: chart.NewRandomSequence().WithLen(10).WithMin(0).WithMax(10)}.Values(),
 	})
 
 	components := templates.Charts(page, chartData)
