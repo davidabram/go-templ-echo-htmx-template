@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"context"
+	"log"
 	"os"
 
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
