@@ -34,6 +34,12 @@ func (a *App) Charts(c echo.Context) error {
 		YValues: chart.Seq{Sequence: chart.NewRandomSequence().WithLen(10).WithMin(0).WithMax(10)}.Values(),
 	})
 
+	chartData = append(chartData, templates.TimeSeries{
+		Title: "Series",
+		XValues: []float64{1, 2, 3, 4, 5},
+		YValues: []float64{1, 2, 3, 4, 5},
+	})
+
 	components := templates.Charts(page, chartData)
 	return components.Render(context.Background(), c.Response().Writer)
 }
