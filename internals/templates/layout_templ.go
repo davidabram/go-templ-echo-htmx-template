@@ -205,6 +205,15 @@ func Navigation() templ.Component {
 		if err != nil {
 			return err
 		}
+		_, err = templBuffer.WriteString("</a><a href=\"/charts\">")
+		if err != nil {
+			return err
+		}
+		var_13 := `Charts`
+		_, err = templBuffer.WriteString(var_13)
+		if err != nil {
+			return err
+		}
 		_, err = templBuffer.WriteString("</a></nav><hr>")
 		if err != nil {
 			return err

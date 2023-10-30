@@ -4,6 +4,7 @@ import (
 	"log"
 	"context"
 	"os"
+
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
 	"github.com/donseba/go-htmx"
 	"github.com/joho/godotenv"
@@ -30,6 +31,7 @@ func main() {
 	e.GET("/", app.Hello)
 	e.GET("/about", app.About)
 	e.GET("/books", app.BooksTable)
+	e.GET("/charts", app.Charts)
 
 	e.Static("/", "dist")
 
