@@ -46,7 +46,16 @@ func About(page *Page, htmxHeaders string) templ.Component {
 			if err != nil {
 				return err
 			}
-			_, err = templBuffer.WriteString("</pre>")
+			_, err = templBuffer.WriteString("</pre> <span>")
+			if err != nil {
+				return err
+			}
+			var_5 := `-> `
+			_, err = templBuffer.WriteString(var_5)
+			if err != nil {
+				return err
+			}
+			_, err = templBuffer.WriteString("</span>")
 			if err != nil {
 				return err
 			}

@@ -34,6 +34,7 @@ func main() {
 	e.GET("/charts", app.Charts)
 
 	e.Static("/", "dist")
+	e.Static("/fonts", "static/fonts")
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 
