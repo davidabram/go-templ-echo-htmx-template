@@ -178,7 +178,7 @@ func Navigation() templ.Component {
 			var_9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, err = templBuffer.WriteString("<nav hx-boost=\"true\" hx-target=\"main\" hx-swap=\"outerHTML\"><a href=\"/\">")
+		_, err = templBuffer.WriteString("<nav hx-boost=\"true\" hx-target=\"main\" hx-swap=\"outerHTML show:unset\"><a href=\"/\">")
 		if err != nil {
 			return err
 		}
