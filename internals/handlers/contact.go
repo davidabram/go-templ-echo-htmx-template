@@ -11,11 +11,10 @@ import (
 )
 
 type JokeResponse struct {
-		Failed bool `json:"error"`
-		Setup 	string `json:"setup"`
-		Punchline string `json:"delivery"`
-	}
-
+	Failed    bool   `json:"error"`
+	Setup     string `json:"setup"`
+	Punchline string `json:"delivery"`
+}
 
 func (a *App) Contact(c echo.Context) error {
 	url := "https://v2.jokeapi.dev/joke/Any?type=twopart"
@@ -42,12 +41,12 @@ func (a *App) Contact(c echo.Context) error {
 	}
 
 	page := &templates.Page{
-		Title: "Contact",
-		Boosted: false,
+		Title:   "Contact",
+		Boosted: true,
 	}
 
 	joke := &templates.Joke{
-		Setup: jokeResponse.Setup,
+		Setup:     jokeResponse.Setup,
 		Punchline: jokeResponse.Punchline,
 	}
 

@@ -17,7 +17,7 @@ func (a *App) About(c echo.Context) error {
 	b, _ := json.MarshalIndent(h, "", "\t")
 
 	page := &templates.Page{
-		Title: "About",
+		Title:   "About",
 		Boosted: h.HxBoosted,
 	}
 
