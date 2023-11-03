@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/donseba/go-htmx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -35,6 +36,9 @@ func (a *App) Contact(c echo.Context) error {
 		return err
 	}
 
+	r := c.Request()
+	h := r.Context().Value(htmx.ContextRequestHeader).(htmx.HxRequestHeader)
+
 	var jokeResponse JokeResponse
 	if err := json.Unmarshal(body, &jokeResponse); err != nil {
 		return err
@@ -42,7 +46,7 @@ func (a *App) Contact(c echo.Context) error {
 
 	page := &templates.Page{
 		Title:   "Contact",
-		Boosted: true,
+		Boosted: h.HxBoosted,
 	}
 
 	joke := &templates.Joke{
