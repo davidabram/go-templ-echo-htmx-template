@@ -7,13 +7,13 @@ type Joke struct {
 
 templ Contact(page *Page, joke *Joke) {
 	@Layout(page) {
-		<div>????</div>
-		<div>{ joke.Setup }</div>
-		<details>
-  			<summary>Show Punchline</summary>
-  				{ joke.Punchline }
-		</details>
-		<span> -> </span>
+		<div class="bg-white rounded-lg shadow-lg p-4 m-4">
+			<div class="font-bold text-xl mb-2">Contact Us</div>
+			<div class="mb-4">{ joke.Setup }</div>
+			<details>
+				<summary class="text-blue-600 cursor-pointer hover:underline">Show Punchline</summary>
+				<div class="text-gray-600 mt-2">{ joke.Punchline }</div>
+			</details>
+		</div>
 	}
 }
-
