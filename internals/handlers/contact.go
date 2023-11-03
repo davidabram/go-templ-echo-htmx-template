@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"context"
+	"davidabram/go-templ-echo-htmx-template/internals/templates"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -9,25 +11,19 @@ import (
 )
 
 type JokeResponse struct {
-	Success bool `json:"success"`
-	Body    []struct {
-		ID        string `json:"_id"`
-		Type      string `json:"type"`
-		Setup     string `json:"setup"`
-		Punchline string `json:"punchline"`
-	} `json:"body"`
-}
+		Failed bool `json:"error"`
+		Setup 	string `json:"setup"`
+		Punchline string `json:"delivery"`
+	}
+
 
 func (a *App) Contact(c echo.Context) error {
-	url := "https://dad-jokes.p.rapidapi.com/random/joke"
+	url := "https://v2.jokeapi.dev/joke/Any?type=twopart"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
-
-	req.Header.Add("x-rapidapi-host", "dad-jokes.p.rapidapi.com")
-	req.Header.Add("x-rapidapi-key", "612e44964cmshe2958fd8c359484p10457ejsn7bf2d4dea352")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -45,5 +41,16 @@ func (a *App) Contact(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, jokeResponse)
+	page := &templates.Page{
+		Title: "Contact",
+		Boosted: false,
+	}
+
+	joke := &templates.Joke{
+		Setup: jokeResponse.Setup,
+		Punchline: jokeResponse.Punchline,
+	}
+
+	components := templates.Contact(page, joke)
+	return components.Render(context.Background(), c.Response().Writer)
 }
