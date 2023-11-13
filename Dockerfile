@@ -38,6 +38,8 @@ COPY --from=build /etc/passwd /etc/passwd
 
 COPY --from=build /app/web /web
 
+COPY --from=build /app/.env /.env
+
 USER crocoder
 
 EXPOSE 3000
