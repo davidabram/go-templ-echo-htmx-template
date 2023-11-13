@@ -32,6 +32,8 @@ FROM scratch
 
 WORKDIR /
 
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 COPY --from=bun /app/dist/style.css /dist/style.css
 
 COPY --from=build /etc/passwd /etc/passwd
