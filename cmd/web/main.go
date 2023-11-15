@@ -5,7 +5,12 @@ import (
 	"log"
 	"os"
 
+	"net/http"
+
+	"github.com/clerkinc/clerk-sdk-go/clerk"
+
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
+
 	"github.com/donseba/go-htmx"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -39,6 +44,25 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 
+	clerkClient := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
+}
+
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+	user, err := clerk.GetUser(r)
+	if err != nil {
+
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	templates.ExecuteTemplate(w, "layout", user != nil)
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	clerk.Login(w, r)
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	clerk.Logout(w, r)
 }
 
 func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
