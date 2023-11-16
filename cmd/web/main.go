@@ -32,6 +32,7 @@ func main() {
 	e.GET("/about", app.About)
 	e.GET("/books", app.BooksTable)
 	e.GET("/charts", app.Charts)
+	e.GET("/contact", app.Contact)
 
 	e.Static("/", "dist")
 	e.Static("/fonts", "static/fonts")

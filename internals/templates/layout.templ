@@ -37,12 +37,13 @@ templ Content() {
 }
 
 templ Navigation() {
-	<nav hx-boost="true" hx-target="main" hx-swap="outerHTML show:unset">
-		<a href="/">Home</a>
-		<a href="/about">About</a>
-		<a href="/books">Books</a>
-		<a href="/charts">Charts</a>
+	<nav hx-boost="true" hx-target="main" hx-swap="outerHTML show:unset" class="bg-blue-500 p-4">
+		<a href="/" class="text-white hover:text-blue-200">Home</a>
+		<a href="/about" class="text-white hover:text-blue-200">About</a>
+		<a href="/books" class="text-white hover:text-blue-200">Books</a>
+		<a href="/charts" class="text-white hover:text-blue-200">Charts</a>
+		<a href="/contact" class="text-white hover:text-blue-200">Contact</a>
 	</nav>
-	<hr/>
+	<hr class="my-4" />
 }
 

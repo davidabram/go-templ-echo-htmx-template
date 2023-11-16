@@ -1,0 +1,20 @@
+package templates
+
+type Joke struct {
+	Setup string 
+	Punchline string
+}
+
+templ Contact(page *Page, joke *Joke) {
+	@Layout(page) {
+		<div class="bg-white rounded-lg shadow-lg p-4 m-4">
+			<h1 class="text-xl font-bold mb-4">Contact Us</h1>
+			<p class="mb-4">{ joke.Setup }</p>
+			<details class="text-blue-600 cursor-pointer hover:underline">
+				<summary>Show Punchline</summary>
+				<p class="text-gray-600 mt-2">{ joke.Punchline }</p>
+			</details>
+		</div>
+	}
+}
+
