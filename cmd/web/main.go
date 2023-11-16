@@ -2,14 +2,12 @@ package main
 
 import (
 	"context"
+	"davidabram/go-templ-echo-htmx-template/internals/handlers"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/clerkinc/clerk-sdk-go/clerk"
-
-	"davidabram/go-templ-echo-htmx-template/internals/handlers"
-
 	"github.com/donseba/go-htmx"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -18,7 +16,6 @@ import (
 
 func main() {
 	err := godotenv.Load()
-
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -31,6 +28,7 @@ func main() {
 	e.Use(echoMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	e.Use(HtmxMiddleware)
+	e.Use(clerkMiddleware)
 
 	e.GET("/", app.Hello)
 	e.GET("/about", app.About)
@@ -41,8 +39,6 @@ func main() {
 	e.Static("/", "dist")
 	e.Static("/fonts", "static/fonts")
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
-
 	client, err := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
 	if err != nil {
 		log.Fatalf("Error creating Clerk client: %v", err)
@@ -50,6 +46,7 @@ func main() {
 
 	retrieveUsers(client)
 	retrieveSessions(client)
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
 
 func retrieveUsers(client clerk.Client) {
@@ -58,8 +55,9 @@ func retrieveUsers(client clerk.Client) {
 		panic(err)
 	}
 	fmt.Println("Users:")
-	for i, user := range users {
-		fmt.Printf("%v. %v\n", i+1, *user.FirstName, *user.LastName)
+	for _, user := range users {
+		fmt.Printf("%v. %v\n", user.FirstName, user.LastName)
+
 	}
 }
 
@@ -93,6 +91,17 @@ func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		ctx = context.WithValue(ctx, htmx.ContextRequestHeader, hxh)
 
 		c.SetRequest(c.Request().WithContext(ctx))
+
+		return next(c)
+	}
+}
+
+func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		isSignedIn := true
+
+		c.Set("isSignedIn", isSignedIn)
 
 		return next(c)
 	}

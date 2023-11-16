@@ -9,7 +9,7 @@ templ Layout(page *Page) {
 	<html>
 		@Head(page.Title)
 		if !page.Boosted {
-			@Navigation()
+			@Navigation(false)
 		}
 		@Content() {
 			{ children... }
@@ -31,12 +31,33 @@ templ Head(title string) {
 }
 
 templ Content() {
+	<body>
+
 	<main class="bg-red-500">
 		{ children... }
 	</main>
+		<script>
+			const clerkPublishableKey = 'pk_test_b25lLXJheS04LmNsZXJrLmFjY291bnRzLmRldiQ';
+			const frontendApi = 'one-ray-8.clerk.accounts.dev';
+			const version = '@latest'; 
+			
+			const script = document.createElement('script');
+			script.setAttribute('data-clerk-frontend-api', frontendApi);
+			script.setAttribute('data-clerk-publishable-key', clerkPublishableKey);
+			script.async = true;
+			script.src = `https://${frontendApi}/npm/@clerk/clerk-js${version}/dist/clerk.browser.js`;
+			
+			script.addEventListener('load', async function () {
+				await window.Clerk.load({
+					
+				});
+			});
+			document.body.appendChild(script);
+		</script>
+	</body>
 }
 
-templ Navigation() {
+templ Navigation(isSignedIn bool) {
 	<nav hx-boost="true" hx-target="main" hx-swap="outerHTML show:unset" class="bg-blue-500 p-4">
 		<a href="/" class="text-white hover:text-blue-200">Home</a>
 		<a href="/about" class="text-white hover:text-blue-200">About</a>
@@ -44,11 +65,13 @@ templ Navigation() {
 		<a href="/charts" class="text-white hover:text-blue-200">Charts</a>
 		<a href="/contact" class="text-white hover:text-blue-200">Contact</a>
 
-		{{if isSignedIn}}
+		if isSignedIn {
       		<a href="/logout" class="text-white hover:text-blue-200">Logout</a>
-    	{{else}}
-      		<a href="/login" class="text-white hover:text-blue-200">Login</a>
-    	{{end}}
+		} else {
+			<div id="sign-in">
+			</div>	
+		}
+		
 	</nav>
 	<hr class="my-4" />
 }
