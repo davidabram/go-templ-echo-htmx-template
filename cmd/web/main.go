@@ -2,10 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
-
-	"net/http"
 
 	"github.com/clerkinc/clerk-sdk-go/clerk"
 
@@ -44,25 +43,36 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 
-	clerkClient := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
-}
-
-func mainHandler(w http.ResponseWriter, r *http.Request) {
-	user, err := clerk.GetUser(r)
+	client, err := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
 	if err != nil {
-
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
+		log.Fatalf("Error creating Clerk client: %v", err)
 	}
-	templates.ExecuteTemplate(w, "layout", user != nil)
+
+	retrieveUsers(client)
+	retrieveSessions(client)
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	clerk.Login(w, r)
+func retrieveUsers(client clerk.Client) {
+	users, err := client.Users().ListAll(clerk.ListAllUsersParams{})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Users:")
+	for i, user := range users {
+		fmt.Printf("%v. %v\n", i+1, *user.FirstName, *user.LastName)
+	}
 }
 
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	clerk.Logout(w, r)
+func retrieveSessions(client clerk.Client) {
+	sessions, err := client.Sessions().ListAll()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("\nSessions:")
+	for i, session := range sessions {
+		fmt.Printf("%v. %v (%v)\n", i+1, session.ID, session.Status)
+	}
 }
 
 func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
