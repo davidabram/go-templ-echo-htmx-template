@@ -39,17 +39,17 @@ templ Content() {
 		<script>
 			const clerkPublishableKey = 'pk_test_b25lLXJheS04LmNsZXJrLmFjY291bnRzLmRldiQ';
 			const frontendApi = 'one-ray-8.clerk.accounts.dev';
-			const version = '@latest'; 
-			
+			const version = '@latest';
+
 			const script = document.createElement('script');
 			script.setAttribute('data-clerk-frontend-api', frontendApi);
 			script.setAttribute('data-clerk-publishable-key', clerkPublishableKey);
 			script.async = true;
 			script.src = `https://${frontendApi}/npm/@clerk/clerk-js${version}/dist/clerk.browser.js`;
-			
+
 			script.addEventListener('load', async function () {
 				await window.Clerk.load({
-					
+
 				});
 			});
 			document.body.appendChild(script);
@@ -69,9 +69,9 @@ templ Navigation(isSignedIn bool) {
       		<a href="/logout" class="text-white hover:text-blue-200">Logout</a>
 		} else {
 			<div id="sign-in">
-			</div>	
+			</div>
 		}
-		
+
 	</nav>
 	<hr class="my-4" />
 }

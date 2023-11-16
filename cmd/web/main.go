@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/clerkinc/clerk-sdk-go/clerk"
 	"github.com/donseba/go-htmx"
@@ -56,7 +57,10 @@ func retrieveUsers(client clerk.Client) {
 	}
 	fmt.Println("Users:")
 	for _, user := range users {
-		fmt.Printf("%v. %v\n", user.FirstName, user.LastName)
+		if (user.FirstName == nil) || (user.LastName == nil) {
+			continue
+		}
+		fmt.Printf("%v %v\n", *user.FirstName, *user.LastName)
 
 	}
 }
@@ -98,6 +102,25 @@ func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+
+		r := c.Request()
+
+		sessionToken := r.Header.Get("Authorization")
+		sessionToken = strings.TrimPrefix(sessionToken, "Bearer ")
+
+		client, err := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
+		if err != nil {
+			log.Fatalf("Error creating Clerk client: %v", err)
+		}
+
+
+
+		token, err := client.VerifyToken(sessionToken)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(token)
 
 		isSignedIn := true
 
