@@ -3,9 +3,15 @@ package main
 import (
 	"context"
 	"davidabram/go-templ-echo-htmx-template/internals/handlers"
+	"errors"
 	"fmt"
 	"log"
+	"net"
+	"net/http"
+	"net/url"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/clerkinc/clerk-sdk-go/clerk"
@@ -13,6 +19,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/go-jose/go-jose/v3/jwt"
 )
 
 func main() {
@@ -100,31 +107,119 @@ func HtmxMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+func isDevelopmentOrStaging(c clerk.Client) bool {
+	return strings.HasPrefix(c.APIKey(), "test_") || strings.HasPrefix(c.APIKey(), "sk_test_")
+}
+
+func isProduction(c clerk.Client) bool {
+	return !isDevelopmentOrStaging(c)
+}
+
+var urlSchemeRe = regexp.MustCompile(`(^\w+:|^)\/\/`)
+
+func isCrossOrigin(r *http.Request) bool {
+	// origin contains scheme+host and optionally port (ommitted if 80 or 443)
+	// ref. https://www.rfc-editor.org/rfc/rfc6454#section-6.1
+	origin := strings.TrimSpace(r.Header.Get("Origin"))
+	origin = urlSchemeRe.ReplaceAllString(origin, "") // strip scheme
+	if origin == "" {
+		return false
+	}
+
+	// parse request's host and port, taking into account reverse proxies
+	u := &url.URL{Host: r.Host}
+	host := strings.TrimSpace(r.Header.Get("X-Forwarded-Host"))
+	if host == "" {
+		host = u.Hostname()
+	}
+	port := strings.TrimSpace(r.Header.Get("X-Forwarded-Port"))
+	if port == "" {
+		port = u.Port()
+	}
+
+	if port != "" && port != "80" && port != "443" {
+		host = net.JoinHostPort(host, port)
+	}
+
+	return origin != host
+}
+
 func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		r := c.Request()
-
-		sessionToken := r.Header.Get("Authorization")
-		sessionToken = strings.TrimPrefix(sessionToken, "Bearer ")
 
 		client, err := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
 		if err != nil {
 			log.Fatalf("Error creating Clerk client: %v", err)
 		}
 
+		cookieToken, _ := r.Cookie("__session")
+		clientUat, _ := r.Cookie("__client_uat")
 
+		/* if isDevelopmentOrStaging(client) && (r.Referer() == "" || isCrossOrigin(r)) {
+			c.Set("isSignedIn", false)
+			// error! 401
+			fmt.Println("isDevelopmentOrStaging")
+			return next(c)
+		} */
 
-		token, err := client.VerifyToken(sessionToken)
-		if err != nil {
-			return err
+		if isProduction(client) && clientUat == nil {
+			c.Set("isSignedIn", false)
+			fmt.Println("isProduction")
+			return next(c)
 		}
 
-		fmt.Println(token)
+		if clientUat != nil && clientUat.Value == "0" {
+			c.Set("isSignedIn", false)
+			fmt.Println("clientUat.Value == 0")
+			return next(c)
+		}
 
-		isSignedIn := true
+		if clientUat == nil {
+			c.Set("isSignedIn", false)
+			fmt.Println("clientUat == nil")
+			// error! 401
+			return next(c)
+		}
 
-		c.Set("isSignedIn", isSignedIn)
+		if cookieToken == nil {
+			c.Set("isSignedIn", false)
+			fmt.Println("cookieToken == nil")
+			// error! 401
+			return next(c)
+		}
+
+		var clientUatTs int64
+		ts, err := strconv.ParseInt(clientUat.Value, 10, 64)
+		if err == nil {
+			clientUatTs = ts
+		}
+
+		claims, err := client.VerifyToken(cookieToken.Value)
+
+		if err == nil {
+			if claims.IssuedAt != nil && clientUatTs <= int64(*claims.IssuedAt) {
+				fmt.Println("claims.IssuedAt != nil && clientUatTs <= int64(*claims.IssuedAt)")
+				c.Set("clerk_user", &claims.Subject)
+				c.Set("isSignedIn", true)
+				return next(c)
+			}
+
+			c.Set("isSignedIn", false)
+			// error! 401
+			return next(c)
+		}
+
+		if errors.Is(err, jwt.ErrExpired) || errors.Is(err, jwt.ErrIssuedInTheFuture) {
+			c.Set("isSignedIn", false)
+			fmt.Println("errors.Is(err, jwt.ErrExpired) || errors.Is(err, jwt.ErrIssuedInTheFuture)")
+			// error! 401
+			return next(c)
+		}
+
+		c.Set("isSignedIn", false)
+		fmt.Println("c.Set(\"isSignedIn\", false)")
 
 		return next(c)
 	}

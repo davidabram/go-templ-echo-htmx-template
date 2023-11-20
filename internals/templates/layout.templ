@@ -1,8 +1,29 @@
 package templates
 
 type Page struct {
-	Title string
+	Title   string
 	Boosted bool
+}
+
+templ ClerkScript() {
+	<script>
+		const clerkPublishableKey = 'pk_test_b25lLXJheS04LmNsZXJrLmFjY291bnRzLmRldiQ';
+		const frontendApi = 'one-ray-8.clerk.accounts.dev';
+		const version = '@latest';
+
+		const script = document.createElement('script');
+		script.setAttribute('data-clerk-frontend-api', frontendApi);
+		script.setAttribute('data-clerk-publishable-key', clerkPublishableKey);
+		script.async = true;
+		script.src = `https://${frontendApi}/npm/@clerk/clerk-js${version}/dist/clerk.browser.js`;
+
+		script.addEventListener('load', async function () {
+			await window.Clerk.load({
+
+			});
+		});
+		document.body.appendChild(script);
+	</script>
 }
 
 templ Layout(page *Page) {
@@ -11,9 +32,14 @@ templ Layout(page *Page) {
 		if !page.Boosted {
 			@Navigation(false)
 		}
-		@Content() {
-			{ children... }
-		}
+		<body>
+			@Content() {
+				{ children... }
+			}
+			if !page.Boosted {
+				@ClerkScript()
+			}
+		</body>
 	</html>
 }
 
@@ -31,30 +57,9 @@ templ Head(title string) {
 }
 
 templ Content() {
-	<body>
-
 	<main class="bg-red-500">
 		{ children... }
 	</main>
-		<script>
-			const clerkPublishableKey = 'pk_test_b25lLXJheS04LmNsZXJrLmFjY291bnRzLmRldiQ';
-			const frontendApi = 'one-ray-8.clerk.accounts.dev';
-			const version = '@latest';
-
-			const script = document.createElement('script');
-			script.setAttribute('data-clerk-frontend-api', frontendApi);
-			script.setAttribute('data-clerk-publishable-key', clerkPublishableKey);
-			script.async = true;
-			script.src = `https://${frontendApi}/npm/@clerk/clerk-js${version}/dist/clerk.browser.js`;
-
-			script.addEventListener('load', async function () {
-				await window.Clerk.load({
-
-				});
-			});
-			document.body.appendChild(script);
-		</script>
-	</body>
 }
 
 templ Navigation(isSignedIn bool) {
@@ -64,15 +69,11 @@ templ Navigation(isSignedIn bool) {
 		<a href="/books" class="text-white hover:text-blue-200">Books</a>
 		<a href="/charts" class="text-white hover:text-blue-200">Charts</a>
 		<a href="/contact" class="text-white hover:text-blue-200">Contact</a>
-
 		if isSignedIn {
-      		<a href="/logout" class="text-white hover:text-blue-200">Logout</a>
+			<a href="/logout" class="text-white hover:text-blue-200">Logout</a>
 		} else {
-			<div id="sign-in">
-			</div>
+			<div id="sign-in"></div>
 		}
-
 	</nav>
-	<hr class="my-4" />
+	<hr class="my-4"/>
 }
-
