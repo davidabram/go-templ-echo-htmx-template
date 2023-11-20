@@ -16,10 +16,10 @@ import (
 
 	"github.com/clerkinc/clerk-sdk-go/clerk"
 	"github.com/donseba/go-htmx"
+	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
-	"github.com/go-jose/go-jose/v3/jwt"
 )
 
 func main() {
@@ -43,6 +43,7 @@ func main() {
 	e.GET("/books", app.BooksTable)
 	e.GET("/charts", app.Charts)
 	e.GET("/contact", app.Contact)
+	e.GET("/signin", app.SiginIn)
 
 	e.Static("/", "dist")
 	e.Static("/fonts", "static/fonts")
