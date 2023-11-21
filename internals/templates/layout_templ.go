@@ -176,7 +176,6 @@ func Head(title string) templ.Component {
 			return err
 		}
 		var_9 := `
-			htmx.logger = console.log
 		`
 		_, err = templBuffer.WriteString(var_9)
 		if err != nil {
@@ -283,31 +282,46 @@ func Navigation(isSignedIn bool) templ.Component {
 		if err != nil {
 			return err
 		}
-		_, err = templBuffer.WriteString("</a>")
+		_, err = templBuffer.WriteString("</a><div id=\"user-button\"></div></nav><script type=\"module\">")
 		if err != nil {
 			return err
 		}
-		if isSignedIn {
-			_, err = templBuffer.WriteString("<a href=\"/logout\" class=\"text-white hover:text-blue-200\">")
-			if err != nil {
-				return err
+		var_17 := `
+      const script = document.createElement("script");
+      script.async = true;
+
+	  const userButton = document.getElementById('user-button');
+
+      window.addEventListener("load", async function () {
+        await window.Clerk.load();
+
+		document.addEventListener("htmx:removingHeadElement", function (event) {
+			if(event.detail.headElement.getAttribute('data-emotion') === 'cl-internal' && event.detail.headElement.hasAttributes('data-s')) {
+				event.preventDefault();
 			}
-			var_17 := `Logout`
-			_, err = templBuffer.WriteString(var_17)
-			if err != nil {
-				return err
-			}
-			_, err = templBuffer.WriteString("</a>")
-			if err != nil {
-				return err
-			}
-		} else {
-			_, err = templBuffer.WriteString("<div id=\"sign-in\"></div>")
-			if err != nil {
-				return err
-			}
+		});
+
+        if (Clerk.user) {
+			window.Clerk.mountUserButton(userButton);
+        } else {
+			document.location.href="/signin";
 		}
-		_, err = templBuffer.WriteString("</nav><hr class=\"my-4\">")
+
+        Clerk.addListener(async ({ user }) => {
+          if (user) {
+			window.Clerk.mountUserButton(userButton);
+          } else {
+			document.location.href="/signin";
+		}
+        });
+      });
+      document.body.appendChild(script);
+    `
+		_, err = templBuffer.WriteString(var_17)
+		if err != nil {
+			return err
+		}
+		_, err = templBuffer.WriteString("</script><hr class=\"my-4\">")
 		if err != nil {
 			return err
 		}

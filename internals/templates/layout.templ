@@ -51,7 +51,6 @@ templ Head(title string) {
 		<script src="https://unpkg.com/htmx.org@1.9.6/dist/ext/head-support.js"></script>
 		<link href="/style.css" rel="stylesheet"/>
 		<script>
-			htmx.logger = console.log
 		</script>
 	</head>
 }
@@ -76,17 +75,23 @@ templ Navigation(isSignedIn bool) {
       script.async = true;
 
 	  const userButton = document.getElementById('user-button');
-  
+
       window.addEventListener("load", async function () {
         await window.Clerk.load();
-  
+
+		document.addEventListener("htmx:removingHeadElement", function (event) {
+			if(event.detail.headElement.getAttribute('data-emotion') === 'cl-internal' && event.detail.headElement.hasAttributes('data-s')) {
+				event.preventDefault();
+			}
+		});
+
         if (Clerk.user) {
 			window.Clerk.mountUserButton(userButton);
         } else {
 			document.location.href="/signin";
 		}
-  
-        Clerk.addListener(({ user }) => {
+
+        Clerk.addListener(async ({ user }) => {
           if (user) {
 			window.Clerk.mountUserButton(userButton);
           } else {
@@ -96,5 +101,5 @@ templ Navigation(isSignedIn bool) {
       });
       document.body.appendChild(script);
     </script>
-	<hr class="my-4" />
+	<hr class="my-4"/>
 }

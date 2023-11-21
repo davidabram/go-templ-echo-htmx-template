@@ -13,16 +13,16 @@ templ SignIn(page *Page, name string, htmxHeaders string) {
       script.async = true;
 
       const signInDiv = document.getElementById('sign-in');
-  
+
       window.addEventListener("load", async function () {
         await window.Clerk.load();
-  
+
         if (Clerk.user) {
           document.location.href="/";
         } else {
           window.Clerk.mountSignIn(signInDiv);
         }
-  
+
         Clerk.addListener(({ user }) => {
           if (user) {
             document.location.href="/";
