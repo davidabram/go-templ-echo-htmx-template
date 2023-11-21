@@ -87,16 +87,12 @@ templ Navigation(isSignedIn bool) {
 
         if (Clerk.user) {
 			window.Clerk.mountUserButton(userButton);
-        } else {
-			document.location.href="/signin";
-		}
+        }
 
         Clerk.addListener(async ({ user }) => {
           if (user) {
 			window.Clerk.mountUserButton(userButton);
-          } else {
-			document.location.href="/signin";
-		}
+          }
         });
       });
       document.body.appendChild(script);

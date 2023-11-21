@@ -148,6 +148,11 @@ func isCrossOrigin(r *http.Request) bool {
 func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
+		currentRoute := c.Path()
+		if currentRoute == "/signin" {
+			return next(c)
+		}
+
 		r := c.Request()
 
 		client, err := clerk.NewClient(os.Getenv("CLERK_SECRET_KEY"))
@@ -168,27 +173,27 @@ func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if isProduction(client) && clientUat == nil {
 			c.Set("isSignedIn", false)
 			fmt.Println("isProduction")
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		if clientUat != nil && clientUat.Value == "0" {
 			c.Set("isSignedIn", false)
 			fmt.Println("clientUat.Value == 0")
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		if clientUat == nil {
 			c.Set("isSignedIn", false)
 			fmt.Println("clientUat == nil")
 			// error! 401
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		if cookieToken == nil {
 			c.Set("isSignedIn", false)
 			fmt.Println("cookieToken == nil")
 			// error! 401
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		var clientUatTs int64
@@ -209,19 +214,19 @@ func clerkMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 			c.Set("isSignedIn", false)
 			// error! 401
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		if errors.Is(err, jwt.ErrExpired) || errors.Is(err, jwt.ErrIssuedInTheFuture) {
 			c.Set("isSignedIn", false)
 			fmt.Println("errors.Is(err, jwt.ErrExpired) || errors.Is(err, jwt.ErrIssuedInTheFuture)")
 			// error! 401
-			return next(c)
+			return c.Redirect(http.StatusFound, "/signin")
 		}
 
 		c.Set("isSignedIn", false)
 		fmt.Println("c.Set(\"isSignedIn\", false)")
 
-		return next(c)
+		return c.Redirect(http.StatusFound, "/signin")
 	}
 }
