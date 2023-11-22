@@ -308,7 +308,9 @@ func Navigation(isSignedIn bool) templ.Component {
 
         Clerk.addListener(async ({ user }) => {
           if (user) {
-			window.Clerk.mountUserButton(userButton);
+			window.Clerk.mountUserButton(userButton, {
+				afterSignOutUrl: "/signin"
+			});
           }
         });
       });
