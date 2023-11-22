@@ -5,6 +5,7 @@ import (
 
 	"davidabram/go-templ-echo-htmx-template/internals/templates"
 
+
 	"github.com/donseba/go-htmx"
 	"github.com/labstack/echo/v4"
 
