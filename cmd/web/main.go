@@ -54,7 +54,7 @@ func main() {
 	}
 
 	retrieveUsers(client)
-	retrieveSessions(client)
+	// retrieveSessions(client)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
 
