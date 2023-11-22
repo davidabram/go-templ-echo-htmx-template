@@ -1,19 +1,45 @@
 package templates
 
 type Page struct {
-	Title string
+	Title   string
 	Boosted bool
+}
+
+templ ClerkScript() {
+	<script>
+		const clerkPublishableKey = 'pk_test_b25lLXJheS04LmNsZXJrLmFjY291bnRzLmRldiQ';
+		const frontendApi = 'one-ray-8.clerk.accounts.dev';
+		const version = '@latest';
+
+		const script = document.createElement('script');
+		script.setAttribute('data-clerk-frontend-api', frontendApi);
+		script.setAttribute('data-clerk-publishable-key', clerkPublishableKey);
+		script.async = true;
+		script.src = `https://${frontendApi}/npm/@clerk/clerk-js${version}/dist/clerk.browser.js`;
+
+		script.addEventListener('load', async function () {
+			await window.Clerk.load({
+
+			});
+		});
+		document.body.appendChild(script);
+	</script>
 }
 
 templ Layout(page *Page) {
 	<html>
 		@Head(page.Title)
 		if !page.Boosted {
-			@Navigation()
+			@Navigation(false)
 		}
-		@Content() {
-			{ children... }
-		}
+		<body>
+			@Content() {
+				{ children... }
+			}
+			if !page.Boosted {
+				@ClerkScript()
+			}
+		</body>
 	</html>
 }
 
@@ -25,7 +51,6 @@ templ Head(title string) {
 		<script src="https://unpkg.com/htmx.org@1.9.6/dist/ext/head-support.js"></script>
 		<link href="/style.css" rel="stylesheet"/>
 		<script>
-			htmx.logger = console.log
 		</script>
 	</head>
 }
@@ -36,14 +61,41 @@ templ Content() {
 	</main>
 }
 
-templ Navigation() {
+templ Navigation(isSignedIn bool) {
 	<nav hx-boost="true" hx-target="main" hx-swap="outerHTML show:unset" class="bg-blue-500 p-4">
 		<a href="/" class="text-white hover:text-blue-200">Home</a>
 		<a href="/about" class="text-white hover:text-blue-200">About</a>
 		<a href="/books" class="text-white hover:text-blue-200">Books</a>
 		<a href="/charts" class="text-white hover:text-blue-200">Charts</a>
 		<a href="/contact" class="text-white hover:text-blue-200">Contact</a>
+		<div id="user-button"></div>
 	</nav>
-	<hr class="my-4" />
-}
+	<script type="module">
+      const script = document.createElement("script");
+      script.async = true;
 
+	  const userButton = document.getElementById('user-button');
+
+      window.addEventListener("load", async function () {
+        await window.Clerk.load();
+
+		document.addEventListener("htmx:removingHeadElement", function (event) {
+			if(event.detail.headElement.getAttribute('data-emotion') === 'cl-internal' && event.detail.headElement.hasAttributes('data-s')) {
+				event.preventDefault();
+			}
+		});
+
+        if (Clerk.user) {
+			window.Clerk.mountUserButton(userButton);
+        }
+
+        Clerk.addListener(async ({ user }) => {
+          if (user) {
+			window.Clerk.mountUserButton(userButton);
+          }
+        });
+      });
+      document.body.appendChild(script);
+    </script>
+	<hr class="my-4"/>
+}

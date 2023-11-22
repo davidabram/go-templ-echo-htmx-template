@@ -1,0 +1,38 @@
+package templates
+
+templ SignIn(page *Page, name string, htmxHeaders string) {
+    <html>
+		@Head(page.Title)
+		<body class="flex items-center justify-center">
+			<div id="sign-in"></div>
+			if !page.Boosted {
+				@ClerkScript()
+			}
+            <script type="module">
+      const script = document.createElement("script");
+      script.async = true;
+
+      const signInDiv = document.getElementById('sign-in');
+
+      window.addEventListener("load", async function () {
+        await window.Clerk.load();
+
+        if (Clerk.user) {
+          document.location.href="/";
+        } else {
+          window.Clerk.mountSignIn(signInDiv);
+        }
+
+        Clerk.addListener(({ user }) => {
+          if (user) {
+            document.location.href="/";
+          } else {console.log('render')
+            window.Clerk.mountSignIn(signInDiv);
+          }
+        });
+      });
+      document.body.appendChild(script);
+    </script>
+		</body>
+	</html>
+}
