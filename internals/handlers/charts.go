@@ -26,11 +26,16 @@ func (a *App) Charts(c echo.Context) error {
 		XValues: []float64{1, 2, 3, 4, 5, 6, 7, 8},
 		YValues: []float64{33, 24, 11, 23, 47, 122.4, 36, 10},
 	})
-
 	chartData = append(chartData, templates.TimeSeries{
 		Title: "Series 2",
 		XValues: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 		YValues: []float64{2, 0, 4, 3, 4, 0, 4, 3, 2},
+	})
+
+	chartData = append(chartData, templates.TimeSeries{
+		Title: "Series 3",
+		XValues: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+		YValues: []float64{10, 20, 20, 40, 50, 10, 5, 80, 80},
 	})
 
 

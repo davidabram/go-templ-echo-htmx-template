@@ -2,8 +2,8 @@ package custom_chart
 
 import (
 	"fmt"
-	"math"
 	"github.com/wcharczuk/go-chart/v2"
+	"davidabram/go-templ-echo-htmx-template/internals/spline"
 )
 
 // Interface Assertions.
@@ -80,7 +80,7 @@ func (css CustomContinuousSeries) GetYAxis() chart.YAxisType {
 // Render renders the series.
 func (css CustomContinuousSeries) Render(r CustomRenderer, canvasBox chart.Box, xrange, yrange chart.Range, defaults chart.Style) {
 	style := css.Style.InheritFrom(defaults)
-	CustomLineSeries(r, canvasBox, xrange, yrange, style, css)
+	css.CustomLineSeries(r, canvasBox, xrange, yrange, style, css)
 }
 
 // Validate validates the series.
@@ -99,34 +99,15 @@ func (css CustomContinuousSeries) Validate() error {
 	return nil
 }
 
-func coeff (cx1, cx2, cy1, cy2 int) (m, n float64) {
-
-	direction := cy2 <= cy1
-
-	diff := math.Abs(float64(cy2 - cy1))
-
-	fmt.Println(direction, diff)
-
-	if(diff < 30) {
-		m = 0
-		n = 0.5
-		return
-	}
-
-	if(diff < 50) {
-		m = 0
-		n = 0.5
-		return
-	}
-
-	m = 0.4
-	n = 0.6
-	return
-}
-
-func CustomLineSeries(r CustomRenderer, canvasBox chart.Box, xrange, yrange chart.Range, style chart.Style, vs chart.ValuesProvider) {
+func (css CustomContinuousSeries) CustomLineSeries(r CustomRenderer, canvasBox chart.Box, xrange, yrange chart.Range, style chart.Style, vs chart.ValuesProvider) {
 	if vs.Len() == 0 {
 		return
+	}
+
+	spline, err := spline.NewMonotoneSpline(css.XValues, css.YValues)
+
+	if(err != nil) {
+		panic(err)
 	}
 
 	cb := canvasBox.Bottom
@@ -164,10 +145,28 @@ func CustomLineSeries(r CustomRenderer, canvasBox chart.Box, xrange, yrange char
 			vx, vy = vs.GetValues(i)
 			x = cl + xrange.Translate(vx)
 			y = cb - yrange.Translate(vy)
-			m, n:= coeff(x0, x, y0, y)
-			cx1 := int(float64(x0) + float64(x-x0)*m)
-			cx2 := int(float64(x0) + float64(x-x0)*n)
-			r.CubicCurveTo(cx1, y0, cx2, y, x, y)
+
+			vx1 := float64(vx)-0.8
+			vx2 := float64(vx)-0.2
+
+			vy1, err := spline.At(vx1)
+			if(err != nil) {
+				panic(err)
+			}
+
+			vy2, err := spline.At(vx2)
+			if(err != nil) {
+				panic(err)
+			}
+
+			cx1 := cl + xrange.Translate(vx1)
+			cx2 := cl + xrange.Translate(vx2)
+			cy1 := cb - yrange.Translate(vy1)
+			cy2 := cb - yrange.Translate(vy2)
+
+			fmt.Println(cx1, cy1, cx2, cy2)
+
+			r.CubicCurveTo(cx1, cy1, cx2, cy2, x, y)
 			x0 = x
 			y0 = y
 		}

@@ -24,6 +24,7 @@ func TimeSeriesChart(series TimeSeries) templ.Component {
 		YValues: series.YValues,
 		Style: chart.Style{
 			DotWidth:  5,
+			StrokeWidth: 2,
 		},
 	}
 
