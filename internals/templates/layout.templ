@@ -76,6 +76,9 @@ templ Navigation(isSignedIn bool) {
 		<div class="hidden md:block">
 			@NavLinks()
 		</div>
+		<div id="loader" class="loader">  
+		<div class="loader-spinner"></div>
+		</div>
 		<button class="flex p-3 cursor-pointer group-focus:bg-blue-500 sm:flex md:hidden group">
 			<svg
 				class="w-7 h-7 text-white hover:text-blue-200 transition-all duration-300"
@@ -101,7 +104,16 @@ templ Navigation(isSignedIn bool) {
 	  const userButton = document.getElementById('user-button');
 
       window.addEventListener("load", async function () {
-        await window.Clerk.load();
+
+		const loader = document.getElementById('loader');
+		const userButton = document.getElementById('user-button');
+
+		loader.classList.remove('hidden');
+        
+		await window.Clerk.load();
+
+		loader.classList.add('hidden');
+
 
 		document.addEventListener("htmx:removingHeadElement", function (event) {
 			if(event.detail.headElement.getAttribute('data-emotion') === 'cl-internal' && event.detail.headElement.hasAttributes('data-s')) {
@@ -110,11 +122,13 @@ templ Navigation(isSignedIn bool) {
 		});
 
         if (Clerk.user) {
+			userButton.style.display = 'block';
 			window.Clerk.mountUserButton(userButton);
         }
 
         Clerk.addListener(async ({ user }) => {
           if (user) {
+			userButton.style.display = 'block';
 			window.Clerk.mountUserButton(userButton, {
 				afterSignOutUrl: "/signin"
 			});

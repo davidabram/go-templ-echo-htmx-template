@@ -21,7 +21,7 @@ func (a *App) SiginIn(c echo.Context) error {
 	b, _ := json.MarshalIndent(h, "", "\t")
 
 	page := &templates.Page{
-		Title:   "OMG",
+		Title:   "Sign in",
 		Boosted: h.HxBoosted,
 	}
 

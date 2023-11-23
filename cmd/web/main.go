@@ -53,7 +53,7 @@ func main() {
 		log.Fatalf("Error creating Clerk client: %v", err)
 	}
 
-	retrieveUsers(client)
+	go retrieveUsers(client)
 	// retrieveSessions(client)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
