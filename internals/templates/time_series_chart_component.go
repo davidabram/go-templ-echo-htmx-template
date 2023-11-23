@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/a-h/templ"
+	"davidabram/go-templ-echo-htmx-template/internals/custom_chart"
 	"github.com/wcharczuk/go-chart/v2"
 )
 
@@ -17,25 +18,26 @@ type TimeSeries struct {
 }
 
 func TimeSeriesChart(series TimeSeries) templ.Component {
-	mainSeries := chart.ContinuousSeries{
+	mainSeries := custom_chart.CustomContinuousSeries{
 		Name:    series.Title,
 		XValues: series.XValues,
 		YValues: series.YValues,
+		Style: chart.Style{
+			DotWidth:  5,
+			StrokeWidth: 2,
+		},
 	}
 
-	smaSeries := &chart.SMASeries{
-		InnerSeries: mainSeries,
-	}
-
-	graph := chart.Chart{
-		Series: []chart.Series{
+	graph := custom_chart.CustomChart{
+		Width: 1400,
+		Height: 400,
+		Series: []custom_chart.CustomSeries{
 			mainSeries,
-			smaSeries,
 		},
 	}
 
 	buffer := bytes.NewBuffer([]byte{})
-	err := graph.Render(chart.SVG, buffer)
+	err := graph.Render(custom_chart.CustomSVG, buffer)
 
 	if err != nil {
 		panic(err)
