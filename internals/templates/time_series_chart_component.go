@@ -7,6 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 	"davidabram/go-templ-echo-htmx-template/internals/custom_chart"
+	"github.com/wcharczuk/go-chart/v2"
 )
 
 
@@ -21,9 +22,14 @@ func TimeSeriesChart(series TimeSeries) templ.Component {
 		Name:    series.Title,
 		XValues: series.XValues,
 		YValues: series.YValues,
+		Style: chart.Style{
+			DotWidth:  5,
+		},
 	}
 
 	graph := custom_chart.CustomChart{
+		Width: 1400,
+		Height: 400,
 		Series: []custom_chart.CustomSeries{
 			mainSeries,
 		},

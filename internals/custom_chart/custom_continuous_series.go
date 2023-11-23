@@ -2,6 +2,7 @@ package custom_chart
 
 import (
 	"fmt"
+	"math"
 	"github.com/wcharczuk/go-chart/v2"
 )
 
@@ -98,6 +99,31 @@ func (css CustomContinuousSeries) Validate() error {
 	return nil
 }
 
+func coeff (cx1, cx2, cy1, cy2 int) (m, n float64) {
+
+	direction := cy2 <= cy1
+
+	diff := math.Abs(float64(cy2 - cy1))
+
+	fmt.Println(direction, diff)
+
+	if(diff < 30) {
+		m = 0
+		n = 0.5
+		return
+	}
+
+	if(diff < 50) {
+		m = 0
+		n = 0.5
+		return
+	}
+
+	m = 0.4
+	n = 0.6
+	return
+}
+
 func CustomLineSeries(r CustomRenderer, canvasBox chart.Box, xrange, yrange chart.Range, style chart.Style, vs chart.ValuesProvider) {
 	if vs.Len() == 0 {
 		return
@@ -138,7 +164,12 @@ func CustomLineSeries(r CustomRenderer, canvasBox chart.Box, xrange, yrange char
 			vx, vy = vs.GetValues(i)
 			x = cl + xrange.Translate(vx)
 			y = cb - yrange.Translate(vy)
-			r.LineTo(x, y)
+			m, n:= coeff(x0, x, y0, y)
+			cx1 := int(float64(x0) + float64(x-x0)*m)
+			cx2 := int(float64(x0) + float64(x-x0)*n)
+			r.CubicCurveTo(cx1, y0, cx2, y, x, y)
+			x0 = x
+			y0 = y
 		}
 		r.Stroke()
 	}

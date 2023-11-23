@@ -19,6 +19,7 @@ func CustomSVG(width, height int) (CustomRenderer, error) {
 	buffer := bytes.NewBuffer([]byte{})
 	canvas := newCanvas(buffer)
 	canvas.Start(width, height)
+	fmt.Println("width", width, "height", height)
 	return &vectorRenderer{
 		b:   buffer,
 		c:   canvas,
@@ -114,6 +115,7 @@ func (vr *vectorRenderer) QuadCurveTo(cx, cy, x, y int) {
 }
 
 func (vr *vectorRenderer) CubicCurveTo(cx1, cy1, cx2, cy2, x, y int) {
+	vr.p = append(vr.p, fmt.Sprintf("C %d,%d %d,%d %d,%d", cx1, cy1, cx2, cy2, x, y))
 }
 
 func (vr *vectorRenderer) ArcTo(cx, cy int, rx, ry, startAngle, delta float64) {
