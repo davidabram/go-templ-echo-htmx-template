@@ -9,7 +9,7 @@ tailwind:
 templ:
 	@./bin/templ generate ./internals/templates/*.templ
 
-tailwind-build:
+tailwind-gen:
 	@./node_modules/.bin/tailwindcss -i ./style.css -o ./dist/style.css
 
 .ONESHELL:
@@ -21,8 +21,10 @@ setup:
 .PHONY: gen
 gen:
 	templ generate
+	$(MAKE) tailwind-gen
 
 .PHONY: install
 install:
 	go install github.com/cosmtrek/air@latest
 	go install github.com/a-h/templ/cmd/templ@latest
+	bun i
