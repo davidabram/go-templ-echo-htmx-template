@@ -17,3 +17,12 @@ setup:
 	@curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
 	@go install github.com/a-h/templ/cmd/templ@latest && cp $(shell go env GOPATH)/bin/templ ./bin
 	@bun i
+
+.PHONY: gen
+gen:
+	templ generate
+
+.PHONY: install
+install:
+	go install github.com/cosmtrek/air@latest
+	go install github.com/a-h/templ/cmd/templ@latest
