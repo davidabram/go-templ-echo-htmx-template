@@ -28,6 +28,10 @@ jobs:
           make install
           make gen
           go test -v ./...
+      - name: Dry build
+        run: |
+          go build -o ./tmp/main ./cmd/web/main.go
+
 
 
 
